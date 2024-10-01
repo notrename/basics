@@ -1,14 +1,16 @@
 import datetime
 
-from lib.task_manager.dataclasses import Task
-from lib.task_manager.model import TaskManager
+from lib.client.client import App
+
+app = App(
+    username='ogmnogoel',
+    age=22,
+)
 
 
-tm = TaskManager()
 
-
-task = Task(
-    name='Решить практическое задание',
+app.create_task(
+    name='test',
     priority='medium',
     deadline=datetime.datetime(
         year=2024,
@@ -18,7 +20,5 @@ task = Task(
         minute=0,
     )
 )
-
-tm.add_task(task)
-tm.get_tasks()
-tm.remove_task(id_=1)
+print(app.get_achievements())
+print(app.get_tasks())

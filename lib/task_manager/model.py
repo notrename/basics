@@ -1,20 +1,18 @@
 from lib.task_manager.dataclasses import Task
 from dataclasses import asdict
 
+from lib.user.model import User
 
-class TaskManager:
-    __TASKS = {}
 
-    def __init__(self):
-        ...
-
+class TaskManager(User):
     def __get_id(
             self,
     ) -> int:
-        length_tasks = len(self.__TASKS)
+        length_tasks = len(self._TASKS)
+        e = self._COMPLETE_TASKS
         return length_tasks + 1
 
-    def add_task(
+    def _add_task(
             self,
             task: Task,
     ) -> None:
@@ -24,15 +22,18 @@ class TaskManager:
         if deadline:
             deadline = deadline.strftime('%Y-%m-%d %H:%M')
             task.update(deadline=deadline)
-        self.__TASKS[id_] = task
+        self._TASKS[id_] = task
 
-    def remove_task(
+    def _add_complete_task(self, task: Task):
+        self._COMPLETE_TASKS.append(task)
+
+    def _remove_task(
         self,
         id_: int,
     ) -> None | bool:
         if id_ < 0:
             return False
-        self.__TASKS.pop(id_)
+        self._TASKS.pop(id_)
         self.__sort_tasks()
 
     def __sort_tasks(
@@ -43,17 +44,17 @@ class TaskManager:
         Сортирует задачи по id
         :return: None
         """
-        values = [*self.__TASKS.values()]
-        self.__TASKS.clear()
-        self.__TASKS.update(
+        values = [*self._TASKS.values()]
+        self._TASKS.clear()
+        self._TASKS.update(
             {
                 task + 1: values[task] for task in range(0, len(values))
             }
         )
 
-    def get_tasks(self) -> str:
+    def _get_tasks(self) -> str:
         tasks_str = 'Ваши задачи:\n'
-        for id_, task_name in self.__TASKS.items():
+        for id_, task_name in self._TASKS.items():
             tasks_str += f'{id_}: {task_name}\n'
         return tasks_str
 
@@ -68,7 +69,7 @@ class TaskManager:
 
     def __getattr__(self, item):
         if item == 'tasks':
-            return self.get_tasks()
+            return self._get_tasks()
         else:
             return 'Атрибут не существует'
 
