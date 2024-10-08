@@ -1,16 +1,19 @@
 import datetime
 
 from lib.achievement_manager.model import AchievmentManager
+from lib.decorators import Decs
 from lib.task_manager.dataclasses import Task
 from lib.task_manager.model import TaskManager
 
 
 class App(AchievmentManager, TaskManager):
+
+    @Decs.log_create_task
     def create_task(
             self,
             name: str,
             priority: str,
-            deadline: datetime.datetime,
+            deadline: datetime.datetime | None,
     ) -> Task:
         if not self._TASKS:
             self._add_achievement('ach_add_first_task')
