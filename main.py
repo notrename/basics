@@ -19,5 +19,4 @@ app.create_task(
     )
 
 )
-print(app.get_achievements())
-print(app.get_tasks())
+print(app.remove_task(1))
