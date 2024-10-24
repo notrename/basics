@@ -8,7 +8,6 @@ from lib.task_manager.model import TaskManager
 
 class App(AchievmentManager, TaskManager):
 
-    @Decs.log_create_task
     def create_task(
             self,
             name: str,
@@ -22,12 +21,13 @@ class App(AchievmentManager, TaskManager):
             priority=priority,
             deadline=deadline,
         )
-        self._add_task(task)
+        self._add_task(task=task)
         return task
 
     def get_achievements(self):
         return self._USER_ACHIEVMENTS
 
+    @Decs.log_del_task
     def remove_task(self, id_: int):
         if not self._COMPLETE_TASKS_COUNT:
             self._add_achievement('ach_complete_first_task')

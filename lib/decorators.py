@@ -1,3 +1,6 @@
+import json
+from dataclasses import asdict
+
 
 class Decs:
 
@@ -22,3 +25,39 @@ class Decs:
             # )
         return wrapper  # Тут как раз мы и возвращаем функцию-обёртку
 
+    @staticmethod
+    def logger(fn):
+        def wrapper(*args, **kwargs):
+
+            print(f'Вызван метод: {fn.__name__} с аргументами: ', *args, {**kwargs})
+            fn(*args, **kwargs)
+
+            with open('log.json', 'a', encoding='utf8') as f:
+                f.write(f'Вызван метод: {fn.__name__} с аргументами: {json.dumps({**kwargs}, indent=2)}\n')
+
+        return wrapper
+
+    @staticmethod
+    def json_logger(fn):
+        def wrapper(*args, **kwargs):
+            kwa = {**kwargs}
+            task = asdict(kwa.get('task'))
+            deadline = task.get('deadline')
+            if deadline:
+                deadline = deadline.strftime('%Y-%m-%d %H:%M')
+                task.update(deadline=deadline)
+            fn(task=task)
+            json_str = json.dumps(task, indent=2)
+            with open('tasks.json', 'a', encoding='utf8') as f:
+                f.write(json_str)
+
+        return wrapper
+
+
+    @staticmethod  # Декоратор который работает везде) и в клиенте и таск менеджере хе-хе
+    def log_del_task(fn):
+        def wrapper(self, *args, **kwargs):
+            result = fn(*args, **kwargs)
+            print(f'Задача решена')
+            return result
+        return wrapper

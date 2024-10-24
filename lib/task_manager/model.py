@@ -1,3 +1,6 @@
+import json
+
+from lib.decorators import Decs
 from lib.task_manager.dataclasses import Task
 from dataclasses import asdict
 
@@ -12,6 +15,12 @@ class TaskManager(User):
         e = self._COMPLETE_TASKS
         return length_tasks + 1
 
+    @staticmethod
+    def task_saver(task):
+        json_str = json.dumps(task, indent=2)
+        with open('tasks.json', 'a', encoding='utf8') as f:
+            f.write(json_str)
+
     def _add_task(
             self,
             task: Task,
@@ -22,6 +31,7 @@ class TaskManager(User):
         if deadline:
             deadline = deadline.strftime('%Y-%m-%d %H:%M')
             task.update(deadline=deadline)
+        self.task_saver(task={id_: task})
         self._TASKS[id_] = task
 
     def _add_complete_task(self, task: Task):
